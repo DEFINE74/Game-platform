@@ -52,13 +52,6 @@ void setup() {
   strip.show(); // Initialize all pixels to 'off'
 }
 
-Orientation SetOrientation(const uint8_t ORIENTATION_CODE) {
-  if (ORIENTATION_CODE == 0) return VERTICAL;
-  else if (ORIENTATION_CODE == 1) return HORIZONTAL;
-  else if (ORIENTATION_CODE == 2) return VERTICAL_TOGETHER;
-  else if (ORIENTATION_CODE == 3) return HORIZONTAL_TOGETHER;
-  else return INVALID_ARGUMENT;
-}
 
 bool CheckCoordinate(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   switch(orientation) {
@@ -71,7 +64,7 @@ bool CheckCoordinate(Orientation orientation, Player player, const uint8_t X_COO
   case VERTICAL_TOGETHER:
     return (X_COORD >= 0 && X_COORD <= 24) && (Y_COORD >= 0 && Y_COORD <= 18);
   case HORIZONTAL_TOGETHER:
-    return (X_COORD >= 0 && X_COORD <= 18) && (Y_COORD >= 0 && Y_COORD <= 24);
+    return (X_COORD >= 0 && X_COORD <= 36) && (Y_COORD >= 0 && Y_COORD <= 12);
   default: 
     return false;
   }
@@ -104,7 +97,7 @@ void SetPixelHorizontal(Orientation orientation, Player player, const uint8_t X_
 void SetPixelHorizontalTogether(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
 
-  int led_index = 18 * Y_COORD - 18 + X_COORD - 1;
+  int led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
 
   SetPixel(led_index, player);  
 }
@@ -116,9 +109,8 @@ void SetPixelVerticalTogether(Orientation orientation, Player player, const uint
   SetPixel(led_index, player);
 }
 
-void SetPixelNavigation(const uint8_t ORIENTATION_CODE, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
-  Orientation game_orientation = SetOrientation(ORIENTATION_CODE);
-
+void SetPixelNavigation(Orientation game_orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
+  
   switch (game_orientation) {
   case VERTICAL:
     SetPixelVertical(game_orientation, player, X_COORD, Y_COORD);
@@ -166,6 +158,13 @@ void SetPixelNavigation(const uint8_t ORIENTATION_CODE, Player player, const uin
       }
     }
   }
+  void HorizontalTogether(Player player1, Player player2) {
+    for (int x = 1; x <= 36; x++) {
+      for (int y = 1; y <= 12; y++) {
+        SetPixelHorizontalTogether(HORIZONTAL_TOGETHER, player1, x, y);
+      }
+    }
+  }
   
 #endif
 
@@ -173,9 +172,15 @@ void loop() {
   Player player1(1, SALAD_GREEN); // PLAYER 1 - RED
   Player player2(2, PURPLE); //PLAYER 2 - BLUE
 
+  //SetPixelNavigation(HORIZONTAL_TOGETHER, player1, 1, 1);
+  //SetPixelNavigation(HORIZONTAL_TOGETHER, player1, 19, 1);
+  /*strip.SetPixelColor(198, SALAD_GREEN);
+  strip.SetPixelColor(233, PURPLE);*/
+
 #ifdef DEBUG
   //VerticalTest(player1, player2);
-  HorizontalTest(player1, player2);
+  //HorizontalTest(player1, player2);
+  HorizontalTogether(player1, player2);
 #endif
 
 }
