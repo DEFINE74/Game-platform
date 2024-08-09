@@ -13,6 +13,11 @@
 #define BLUE   strip.Color(0, 0, 255)
 #define YELLOW strip.Color(255, 255, 0)
 #define ORANGE strip.Color(255, 165, 0)
+#define WHITE strip.Color(255,255,255)
+
+#define SALAD_GREEN strip.Color(117, 250, 141)
+#define PURPLE strip.Color(238, 138, 248)
+
 
 
 enum Orientation {
@@ -43,7 +48,7 @@ void setup() {
   Serial.begin(9600);
 
   strip.begin();
-  strip.setBrightness(50);
+  strip.setBrightness(10);
   strip.show(); // Initialize all pixels to 'off'
 }
 
@@ -58,12 +63,10 @@ Orientation SetOrientation(const uint8_t ORIENTATION_CODE) {
 bool CheckCoordinate(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   switch(orientation) {
   case VERTICAL:
-    if (player.player_number == 1) return (X_COORD >= 0 && X_COORD <= 12) && (Y_COORD >= 0 && Y_COORD <= 18);
-    else if (player.player_number == 2) return (X_COORD >= 13 && X_COORD <= 24) && (Y_COORD >= 0 && Y_COORD <= 18);
+    if (player.player_number == 1 || player.player_number == 2) return (X_COORD >= 0 && X_COORD <= 12) && (Y_COORD >= 0 && Y_COORD <= 18);
     else return false;
   case HORIZONTAL:
-    if (player.player_number == 1) return (X_COORD >= 0 && X_COORD <= 18) && (Y_COORD >= 0 && Y_COORD <= 12);
-    else if (player.player_number == 2) return (X_COORD >= 0 && X_COORD <= 18) && (Y_COORD >= 13 && Y_COORD <= 24);
+    if (player.player_number == 1 || player.player_number == 2) return (X_COORD >= 0 && X_COORD <= 18) && (Y_COORD >= 0 && Y_COORD <= 12);
     else return false;
   case VERTICAL_TOGETHER:
     return (X_COORD >= 0 && X_COORD <= 24) && (Y_COORD >= 0 && Y_COORD <= 18);
@@ -80,22 +83,21 @@ void SetPixel(int& led_index, Player player) {
 }
 void SetPixelVertical(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
-
-  int led_index = 18 * X_COORD - 18 + Y_COORD - 1;
+  //int led_index = 18 * X_COORD - 18 + Y_COORD - 1
+  
+  int led_index;
+  if (player.player_number == 1) led_index = 18 * X_COORD - 18 + Y_COORD - 1;
+  else if (player.player_number == 2) led_index = (18 * X_COORD - 18 + Y_COORD - 1) + 216; //led_index = 18 * (12 - X_COORD) + (18 - Y_COORD) + 216; //led_index = (13 + 13 - Y_COORD) * 18 - 18 * X_COORD - 1; 
 
   SetPixel(led_index, player);
 }
 void SetPixelHorizontal(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
-  if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
+  //if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
   int led_index;
 
   if (player.player_number == 1) led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
-  else led_index = (13 - Y_COORD) * 18 - 19 + X_COORD + 18*12;
-
-  Serial.println("YOUR LED INDEX IS - ");
-  Serial.print(led_index);
-  delay(1000);
-
+  else if (player.player_number == 2) led_index = 216 + (18 - X_COORD) + 18 * Y_COORD - 18;
+  
   SetPixel(led_index, player);
 }
 
@@ -122,7 +124,6 @@ void SetPixelNavigation(const uint8_t ORIENTATION_CODE, Player player, const uin
     SetPixelVertical(game_orientation, player, X_COORD, Y_COORD);
     break;
   case HORIZONTAL:
-    Serial.println("HORIZONTAL");
     SetPixelHorizontal(game_orientation, player, X_COORD, Y_COORD);
     break;
   case VERTICAL_TOGETHER:
@@ -137,7 +138,7 @@ void SetPixelNavigation(const uint8_t ORIENTATION_CODE, Player player, const uin
   
 }
 
-
+#define DEBUG
 #ifdef DEBUG
 
   void VerticalTest(Player player1, Player player2) {
@@ -150,8 +151,8 @@ void SetPixelNavigation(const uint8_t ORIENTATION_CODE, Player player, const uin
     for (int y = 1; y <= 18; y++) {
       for (int x = 1; x <= 24; x++) {
         yield();
-        SetPixelVertical(VERTICAL, player1, x, y);
-        SetPixelVertical(VERTICAL, player2, x, y);
+        SetPixelNavigation(VERTICAL, player1, x, y);
+        SetPixelNavigation(VERTICAL, player2, x, y);
       }
     }
   }
@@ -169,18 +170,14 @@ void SetPixelNavigation(const uint8_t ORIENTATION_CODE, Player player, const uin
 #endif
 
 void loop() {
-  Player player1(1, BLUE); // PLAYER 1 - RED
-  Player player2(2, YELLOW); //PLAYER 2 - BLUE
-
-  SetPixelNavigation(1, player1, 4, 12);
-  
-  SetPixelNavigation(1, player1, 4, 13);
-  SetPixelNavigation(1, player2, 4, 1);
+  Player player1(1, SALAD_GREEN); // PLAYER 1 - RED
+  Player player2(2, PURPLE); //PLAYER 2 - BLUE
 
 #ifdef DEBUG
+  //VerticalTest(player1, player2);
   HorizontalTest(player1, player2);
 #endif
-  
+
 }
 
 /*void rainbowCycle(uint8_t wait) {
