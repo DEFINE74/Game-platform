@@ -34,7 +34,7 @@ public:
   uint8_t player_number;
   uint32_t player_color;
   uint16_t victory_amount;
-  
+
   Player(uint8_t player_number, uint32_t player_color) {
     this->player_number = player_number;
     this->player_color = player_color;
@@ -173,6 +173,16 @@ void SetPixelNavigation(Orientation game_orientation, Player player, const uint8
     }
     strip.clear();
   }
+
+  void VerticalTogether(Player player1, Player player2) {
+    for (int x = 1; x <= 24; x++) {
+      for (int y = 1; y <= 18; y++) {
+        yield();
+        SetPixelVerticalTogether(VERTICAL_TOGETHER, player1, x, y);
+      }
+    }
+    strip.clear();
+  }
   
 #endif
 
@@ -180,15 +190,8 @@ void loop() {
   Player player1(1, GREEN); // PLAYER 1 - RED
   Player player2(2, RED); //PLAYER 2 - BLUE
 
-  
-   
-
-  //SetPixelNavigation(HORIZONTAL_TOGETHER, player1, 20, 11);
-
 #ifdef DEBUG
-  //VerticalTest(player1, player2);
-  //HorizontalTest(player1, player2);
-  HorizontalTogether(player1, player2);
+  VerticalTogether(player1, player2);
 #endif
 
 }
