@@ -30,15 +30,16 @@ enum Orientation {
 
 class Player {
 public:
+  
   uint8_t player_number;
   uint32_t player_color;
+  uint16_t victory_amount;
+  
   Player(uint8_t player_number, uint32_t player_color) {
     this->player_number = player_number;
     this->player_color = player_color;
   }
 };
-
-
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_AMOUNT, PIN, NEO_GRB + NEO_KHZ800);
 
@@ -72,7 +73,7 @@ bool CheckCoordinate(Orientation orientation, Player player, const uint8_t X_COO
   }
 }
 
-void SetPixel(int& led_index, Player player) {
+void SetPixel(uint16_t& led_index, Player player) {
   strip.setPixelColor(led_index, player.player_color);
   strip.show();
 }
@@ -80,7 +81,7 @@ void SetPixelVertical(Orientation orientation, Player player, const uint8_t X_CO
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
   //int led_index = 18 * X_COORD - 18 + Y_COORD - 1
   
-  int led_index;
+  uint16_t led_index;
   if (player.player_number == 1) led_index = 18 * X_COORD - 18 + Y_COORD - 1;
   else if (player.player_number == 2) led_index = (18 * X_COORD - 18 + Y_COORD - 1) + 216; //led_index = 18 * (12 - X_COORD) + (18 - Y_COORD) + 216; //led_index = (13 + 13 - Y_COORD) * 18 - 18 * X_COORD - 1; 
 
@@ -88,7 +89,7 @@ void SetPixelVertical(Orientation orientation, Player player, const uint8_t X_CO
 }
 void SetPixelHorizontal(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   //if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
-  int led_index;
+  uint16_t led_index;
 
   if (player.player_number == 1) led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
   else if (player.player_number == 2) led_index = 216 + (18 - X_COORD) + 18 * Y_COORD - 18;
@@ -98,15 +99,17 @@ void SetPixelHorizontal(Orientation orientation, Player player, const uint8_t X_
 
 void SetPixelHorizontalTogether(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
+  uint16_t led_index;
 
-  int led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
+  if(X_COORD > 18) led_index = (12 + Y_COORD) * 18 - (X_COORD - 18);
+  else led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
 
   SetPixel(led_index, player);  
 }
 void SetPixelVerticalTogether(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
 
-  int led_index = 18 * X_COORD - 18 + Y_COORD - 1;
+  uint16_t led_index = 18 * X_COORD - 18 + Y_COORD - 1;
 
   SetPixel(led_index, player);
 }
@@ -147,6 +150,7 @@ void SetPixelNavigation(Orientation game_orientation, Player player, const uint8
         yield();
         SetPixelNavigation(VERTICAL, player1, x, y);
         SetPixelNavigation(VERTICAL, player2, x, y);
+        
       }
     }
   }
@@ -163,21 +167,23 @@ void SetPixelNavigation(Orientation game_orientation, Player player, const uint8
   void HorizontalTogether(Player player1, Player player2) {
     for (int x = 1; x <= 36; x++) {
       for (int y = 1; y <= 12; y++) {
+        yield();
         SetPixelHorizontalTogether(HORIZONTAL_TOGETHER, player1, x, y);
       }
     }
+    strip.clear();
   }
   
 #endif
 
 void loop() {
-  Player player1(1, SALAD_GREEN); // PLAYER 1 - RED
-  Player player2(2, PURPLE); //PLAYER 2 - BLUE
+  Player player1(1, GREEN); // PLAYER 1 - RED
+  Player player2(2, RED); //PLAYER 2 - BLUE
 
-  //SetPixelNavigation(HORIZONTAL_TOGETHER, player1, 1, 1);
-  //SetPixelNavigation(HORIZONTAL_TOGETHER, player1, 19, 1);
-  /*strip.SetPixelColor(198, SALAD_GREEN);
-  strip.SetPixelColor(233, PURPLE);*/
+  
+   
+
+  //SetPixelNavigation(HORIZONTAL_TOGETHER, player1, 20, 11);
 
 #ifdef DEBUG
   //VerticalTest(player1, player2);
