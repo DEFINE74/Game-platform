@@ -38,6 +38,8 @@ public:
   }
 };
 
+
+
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_AMOUNT, PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
