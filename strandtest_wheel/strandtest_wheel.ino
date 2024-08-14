@@ -22,7 +22,7 @@ void setup() {
 void loop() {
   Player player1(1, GREEN); // PLAYER 1 - RED
   Player player2(2, RED); //PLAYER 2 - BLUE
-
+  SetPixelNavigation(HORIZONTAL, player1, 1, 1);
 }
 
 /*void rainbowCycle(uint8_t wait) {
