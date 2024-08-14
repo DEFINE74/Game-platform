@@ -8,8 +8,7 @@
 #define PIN D1
 #define LED_AMOUNT 432
 #define LCD
-
-
+g
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_AMOUNT, PIN, NEO_GRB + NEO_KHZ800); // LED
 
 #ifdef LCD
