@@ -11,7 +11,8 @@ private:
 public:
   uint8_t player_number;
   uint32_t player_color;
-
+  
+  Player();
   Player(uint8_t player_number, uint32_t player_color);
 
 void SetGameName(String _game_name);
