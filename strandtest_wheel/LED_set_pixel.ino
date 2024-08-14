@@ -1,5 +1,6 @@
 #include "LED_set_pixel.h"
 
+
 void SetPixel(uint16_t& led_index, Player player) {
   strip.setPixelColor(led_index, player.player_color);
   strip.show();
@@ -10,8 +11,8 @@ void SetPixelVertical(Orientation orientation, Player player, const uint8_t X_CO
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
   
   uint16_t led_index;
-  if (player.player_number == 1) led_index = 18 * X_COORD - 18 + Y_COORD - 1;
-  else if (player.player_number == 2) led_index = (18 * X_COORD - 18 + Y_COORD - 1) + 216;
+  if (player.GetPlayerNumber() == 1) led_index = 18 * X_COORD - 18 + Y_COORD - 1;
+  else led_index = (18 * X_COORD - 18 + Y_COORD - 1) + 216;
 
   SetPixel(led_index, player);
 }
@@ -19,8 +20,8 @@ void SetPixelHorizontal(Orientation orientation, Player player, const uint8_t X_
   if (!CheckCoordinate(orientation, player, X_COORD, Y_COORD)) return;
   uint16_t led_index;
 
-  if (player.player_number == 1) led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
-  else if (player.player_number == 2) led_index = 216 + (18 - X_COORD) + 18 * Y_COORD - 18;
+  if (player.GetPlayerNumber() == 1) led_index = (13 - Y_COORD) * 18 - 19 + X_COORD;
+  else led_index = 216 + (18 - X_COORD) + 18 * Y_COORD - 18;
   
   SetPixel(led_index, player);
 }
@@ -67,10 +68,10 @@ void SetPixelNavigation(Orientation game_orientation, Player player, const uint8
 bool CheckCoordinate(Orientation orientation, Player player, const uint8_t X_COORD, const uint8_t Y_COORD) {
   switch(orientation) {
   case VERTICAL:
-    if (player.player_number == 1 || player.player_number == 2) return (X_COORD >= 0 && X_COORD <= 12) && (Y_COORD >= 0 && Y_COORD <= 18);
+    if (player.GetPlayerNumber() == 1 || player.GetPlayerNumber() == 2) return (X_COORD >= 0 && X_COORD <= 12) && (Y_COORD >= 0 && Y_COORD <= 18);
     else return false;
   case HORIZONTAL:
-    if (player.player_number == 1 || player.player_number == 2) return (X_COORD >= 0 && X_COORD <= 18) && (Y_COORD >= 0 && Y_COORD <= 12);
+    if (player.GetPlayerNumber() == 1 || player.GetPlayerNumber() == 2) return (X_COORD >= 0 && X_COORD <= 18) && (Y_COORD >= 0 && Y_COORD <= 12);
     else return false;
   case VERTICAL_TOGETHER:
     return (X_COORD >= 0 && X_COORD <= 24) && (Y_COORD >= 0 && Y_COORD <= 18);

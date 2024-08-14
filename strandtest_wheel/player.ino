@@ -3,11 +3,11 @@
 Player::Player() {
   _player_name = "";
   _game_name = "";
-  player_number = 1;
+  _player_number = 1;
   _player_score = 0;
 }
-Player::Player(uint8_t player_number, uint32_t player_color) {
-  this->player_number = player_number;
+Player::Player(uint8_t _player_number, uint32_t player_color) {
+  this->_player_number = _player_number;
   this->player_color = player_color;
   _player_score = 0;
 }
@@ -31,7 +31,9 @@ String Player::GetName() {
 uint8_t Player::GetScore() {
   return _player_score;
 }
-
+uint8_t Player::GetPlayerNumber() {
+  return _player_number;
+}
 void Player::AddScore(uint8_t _player_score) {
   this->_player_score += _player_score;
 }

@@ -8,10 +8,10 @@ private:
   String _game_name;
   String _player_name;
   uint8_t _player_score;
+  uint8_t _player_number;
 public:
-  uint8_t player_number;
   uint32_t player_color;
-  
+
   Player();
   Player(uint8_t player_number, uint32_t player_color);
 
@@ -23,6 +23,8 @@ String GetGameName();
 String GetName();
 uint8_t GetScore();
 void AddScore(uint8_t _player_score);
+
+uint8_t GetPlayerNumber();
 
 };
 #endif
